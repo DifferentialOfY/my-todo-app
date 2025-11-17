@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能待办清单</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app">
+        <!-- 顶部栏 -->
+        <header class="header">
+            <h1>智能待办</h1>
+        </header>
+
+        <!-- 视图切换 -->
+        <div class="view-toggle">
+            <button class="view-btn active" data-view="category">分类模式</button>
+            <button class="view-btn" data-view="summary">汇总模式</button>
+        </div>
+
+        <!-- 分类侧边栏 -->
+        <div class="container">
+            <div class="sidebar">
+                <div class="category active" data-category="all">全部</div>
+                <div class="category" data-category="study">学习</div>
+                <div class="category" data-category="work">工作</div>
+                <div class="category" data-category="life">生活</div>
+            </div>
+
+            <!-- 任务列表 -->
+            <div class="main-content">
+                <div class="task-list" id="taskList">
+                    <!-- 任务会动态显示在这里 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 新建任务按钮 -->
+        <button class="add-btn" id="addTaskBtn">+ 新建任务</button>
+
+        <!-- 底部导航 -->
+        <nav class="bottom-nav">
+            <div class="nav-item active">首页</div>
+            <div class="nav-item">收藏</div>
+            <div class="nav-item">我的</div>
+        </nav>
+    </div>
+
+    <!-- 新建任务模态框 -->
+    <div class="modal" id="taskModal">
+        <div class="modal-content">
+            <h3>新建任务</h3>
+            <form id="taskForm">
+                <input type="text" id="taskTitle" placeholder="标题（必填）" required>
+                <textarea id="taskDesc" placeholder="描述（选填）"></textarea>
+                <input type="date" id="taskDdl">
+                <select id="taskCategory">
+                    <option value="study">学习</option>
+                    <option value="work">工作</option>
+                    <option value="life">生活</option>
+                </select>
+                <div class="modal-actions">
+                    <button type="button" id="cancelBtn">取消</button>
+                    <button type="submit">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
