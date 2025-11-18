@@ -7,6 +7,7 @@ let tasks = JSON.parse(localStorage.getItem('tasks')) || [
         category: 'study',
         ddl: '2024-05-15',
         completed: false,
+        completedAt: null,  // 新增：完成时间
         createdAt: new Date().toISOString()
     },
     {
@@ -14,8 +15,9 @@ let tasks = JSON.parse(localStorage.getItem('tasks')) || [
         title: '买菜',
         description: '西红柿、鸡蛋、青菜',
         category: 'life',
-        ddl: '',
+        ddl: '2024-05-15',
         completed: false,
+        completedAt: null,  // 新增：完成时间
         createdAt: new Date().toISOString()
     }
 ];
@@ -35,6 +37,7 @@ const categories = document.querySelectorAll('.category');
 // 初始化
 function init() {
     renderTasks();
+    renderCompletedHistory();
     setupEventListeners();
 }
 
@@ -170,22 +173,23 @@ function renderTasks() {
 // 创建任务元素
 function createTaskElement(task) {
     const taskDiv = document.createElement('div');
-    taskDiv.className = 'task-item';
+    taskDiv.className = `task-item ${task.completed ? 'completed' : ''}`;
     taskDiv.innerHTML = `
         <div class="task-header">
-            <div class="task-title">${task.title}</div>
+            <div class="task-title">
+                ${task.completed ? '✅ ' : ''}${task.title}
+            </div>
             <div class="task-category">${getCategoryName(task.category)}</div>
         </div>
         ${task.ddl ? `<div class="task-ddl">截止: ${formatDate(task.ddl)}</div>` : ''}
         ${task.description ? `<div class="task-desc">${task.description}</div>` : ''}
+        <div class="task-actions">
+            <button class="complete-btn" onclick="toggleTaskComplete(${task.id})">
+                ${task.completed ? '标记未完成' : '标记完成'}
+            </button>
+            <button class="delete-btn" onclick="deleteTask(${task.id})">删除</button>
+        </div>
     `;
-    
-    taskDiv.addEventListener('click', () => {
-        // 标记完成任务（简化版）
-        task.completed = true;
-        saveTasks();
-        renderTasks();
-    });
     
     return taskDiv;
 }
@@ -204,6 +208,68 @@ function formatDate(dateString) {
     if (!dateString) return '';
     const date = new Date(dateString);
     return `${date.getMonth() + 1}/${date.getDate()}`;
+}
+
+// 切换任务完成状态
+function toggleTaskComplete(taskId) {
+    const task = tasks.find(t => t.id === taskId);
+    if (task) {
+        task.completed = !task.completed;
+        task.completedAt = task.completed ? new Date().toISOString() : null;
+        saveTasks();
+        renderTasks();
+        renderCompletedHistory();
+    }
+}
+
+// 删除任务
+function deleteTask(taskId) {
+    if (confirm('确定要删除这个任务吗？')) {
+        tasks = tasks.filter(t => t.id !== taskId);
+        saveTasks();
+        renderTasks();
+        renderCompletedHistory();
+    }
+}
+
+// 渲染完成历史
+function renderCompletedHistory() {
+    const historyList = document.getElementById('completedHistory');
+    if (!historyList) return;
+    
+    // 计算7天前的日期
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    
+    // 筛选最近7天完成的任务
+    const recentCompleted = tasks
+        .filter(task => task.completed && task.completedAt && new Date(task.completedAt) >= sevenDaysAgo)
+        .sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt));
+    
+    historyList.innerHTML = '';
+    
+    if (recentCompleted.length === 0) {
+        historyList.innerHTML = '<div class="no-history">最近7天没有完成的任务</div>';
+        return;
+    }
+    
+    recentCompleted.forEach(task => {
+        const historyItem = document.createElement('div');
+        historyItem.className = 'history-item';
+        historyItem.innerHTML = `
+            <div class="history-title">✅ ${task.title}</div>
+            <div class="history-time">完成于: ${formatDateTime(task.completedAt)}</div>
+            <div class="history-category">${getCategoryName(task.category)}</div>
+        `;
+        historyList.appendChild(historyItem);
+    });
+}
+
+// 格式化日期时间
+function formatDateTime(dateString) {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return `${date.getMonth() + 1}/${date.getDate()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
 }
 
 // 初始化应用

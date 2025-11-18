@@ -254,3 +254,92 @@ body {
 .summary-mode .main-content {
     margin-left: 0;
 }
+
+/* 已完成任务样式 */
+.task-item.completed {
+    opacity: 0.7;
+    background: #f8f9fa;
+}
+
+.task-item.completed .task-title {
+    text-decoration: line-through;
+    color: #666;
+}
+
+/* 任务操作按钮 */
+.task-actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 8px;
+}
+
+.complete-btn, .delete-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.complete-btn {
+    background: #52c41a;
+    color: white;
+}
+
+.delete-btn {
+    background: #ff4d4f;
+    color: white;
+}
+
+.complete-btn:hover, .delete-btn:hover {
+    opacity: 0.8;
+}
+
+/* 历史记录区域 */
+.history-section {
+    padding: 15px;
+    background: white;
+    margin-bottom: 60px; /* 给底部导航留空间 */
+    border-top: 1px solid #eee;
+}
+
+.history-section h3 {
+    margin-bottom: 10px;
+    color: #333;
+    font-size: 16px;
+}
+
+.history-list {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.history-item {
+    padding: 10px;
+    border: 1px solid #f0f0f0;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    background: #fafafa;
+}
+
+.history-title {
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.history-time {
+    font-size: 12px;
+    color: #666;
+}
+
+.history-category {
+    font-size: 11px;
+    color: #999;
+    margin-top: 2px;
+}
+
+.no-history {
+    text-align: center;
+    color: #999;
+    padding: 20px;
+}
