@@ -7,7 +7,8 @@ let tasks = JSON.parse(localStorage.getItem('tasks')) || [
         category: 'study',
         ddl: '2024-05-15',
         completed: false,
-        completedAt: null,  // 新增：完成时间
+        completedAt: null,
+        isFavorite: false,
         createdAt: new Date().toISOString()
     },
     {
@@ -15,28 +16,35 @@ let tasks = JSON.parse(localStorage.getItem('tasks')) || [
         title: '买菜',
         description: '西红柿、鸡蛋、青菜',
         category: 'life',
-        ddl: '2024-05-15',
+        ddl: '',
         completed: false,
-        completedAt: null,  // 新增：完成时间
+        completedAt: null,
+        isFavorite: false,
         createdAt: new Date().toISOString()
     }
 ];
 
 let currentView = 'category';
 let currentCategory = 'all';
+let currentPage = 'homePage';
 
 // DOM 元素
 const taskList = document.getElementById('taskList');
+const favoriteTaskList = document.getElementById('favoriteTaskList');
+const completedHistory = document.getElementById('completedHistory');
 const taskModal = document.getElementById('taskModal');
 const taskForm = document.getElementById('taskForm');
 const addTaskBtn = document.getElementById('addTaskBtn');
 const cancelBtn = document.getElementById('cancelBtn');
 const viewBtns = document.querySelectorAll('.view-btn');
 const categories = document.querySelectorAll('.category');
+const navItems = document.querySelectorAll('.nav-item');
+const pages = document.querySelectorAll('.page');
 
 // 初始化
 function init() {
     renderTasks();
+    renderFavoriteTasks();
     renderCompletedHistory();
     setupEventListeners();
 }
@@ -70,6 +78,14 @@ function setupEventListeners() {
         });
     });
 
+    // 页面切换
+    navItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            const page = e.target.dataset.page;
+            switchPage(page);
+        });
+    });
+
     // 点击模态框外部关闭
     taskModal.addEventListener('click', (e) => {
         if (e.target === taskModal) {
@@ -77,6 +93,30 @@ function setupEventListeners() {
             taskForm.reset();
         }
     });
+}
+
+// 切换页面
+function switchPage(page) {
+    currentPage = page;
+    
+    // 更新页面显示
+    pages.forEach(p => {
+        p.classList.toggle('active', p.id === page);
+    });
+    
+    // 更新导航状态
+    navItems.forEach(item => {
+        item.classList.toggle('active', item.dataset.page === page);
+    });
+    
+    // 根据页面刷新内容
+    if (page === 'homePage') {
+        renderTasks();
+    } else if (page === 'favoritePage') {
+        renderFavoriteTasks();
+    } else if (page === 'historyPage') {
+        renderCompletedHistory();
+    }
 }
 
 // 切换视图
@@ -122,6 +162,8 @@ function handleAddTask(e) {
         category,
         ddl,
         completed: false,
+        completedAt: null,
+        isFavorite: false,
         createdAt: new Date().toISOString()
     };
     
@@ -138,7 +180,7 @@ function saveTasks() {
     localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
-// 渲染任务列表
+// 渲染任务列表（首页）
 function renderTasks() {
     let filteredTasks = tasks.filter(task => !task.completed);
     
@@ -165,33 +207,133 @@ function renderTasks() {
     }
     
     filteredTasks.forEach(task => {
-        const taskElement = createTaskElement(task);
+        const taskElement = createTaskElement(task, true);
         taskList.appendChild(taskElement);
     });
 }
 
+// 渲染收藏任务
+function renderFavoriteTasks() {
+    const favoriteTasks = tasks.filter(task => task.isFavorite && !task.completed);
+    
+    favoriteTaskList.innerHTML = '';
+    
+    if (favoriteTasks.length === 0) {
+        favoriteTaskList.innerHTML = '<div class="no-tasks">暂无收藏任务</div>';
+        return;
+    }
+    
+    favoriteTasks.forEach(task => {
+        const taskElement = createTaskElement(task, false); // 在收藏页面不显示操作按钮
+        favoriteTaskList.appendChild(taskElement);
+    });
+}
+
 // 创建任务元素
-function createTaskElement(task) {
+function createTaskElement(task, showActions = true) {
     const taskDiv = document.createElement('div');
     taskDiv.className = `task-item ${task.completed ? 'completed' : ''}`;
+    
+    let actionsHTML = '';
+    if (showActions) {
+        actionsHTML = `
+            <div class="task-actions">
+                <button class="complete-btn" onclick="toggleTaskComplete(${task.id})">
+                    ${task.completed ? '标记未完成' : '标记完成'}
+                </button>
+                <button class="favorite-btn ${task.isFavorite ? 'favorited' : ''}" onclick="toggleFavorite(${task.id})">
+                    ${task.isFavorite ? '取消收藏' : '收藏'}
+                </button>
+                <button class="delete-btn" onclick="deleteTask(${task.id})">删除</button>
+            </div>
+        `;
+    }
+    
     taskDiv.innerHTML = `
         <div class="task-header">
             <div class="task-title">
                 ${task.completed ? '✅ ' : ''}${task.title}
+                ${task.isFavorite ? '⭐' : ''}
             </div>
             <div class="task-category">${getCategoryName(task.category)}</div>
         </div>
         ${task.ddl ? `<div class="task-ddl">截止: ${formatDate(task.ddl)}</div>` : ''}
         ${task.description ? `<div class="task-desc">${task.description}</div>` : ''}
-        <div class="task-actions">
-            <button class="complete-btn" onclick="toggleTaskComplete(${task.id})">
-                ${task.completed ? '标记未完成' : '标记完成'}
-            </button>
-            <button class="delete-btn" onclick="deleteTask(${task.id})">删除</button>
-        </div>
+        ${actionsHTML}
     `;
     
     return taskDiv;
+}
+
+// 切换任务完成状态
+function toggleTaskComplete(taskId) {
+    const task = tasks.find(t => t.id === taskId);
+    if (task) {
+        task.completed = !task.completed;
+        task.completedAt = task.completed ? new Date().toISOString() : null;
+        saveTasks();
+        renderTasks();
+        renderFavoriteTasks();
+        if (currentPage === 'historyPage') {
+            renderCompletedHistory();
+        }
+    }
+}
+
+// 切换收藏状态
+function toggleFavorite(taskId) {
+    const task = tasks.find(t => t.id === taskId);
+    if (task) {
+        task.isFavorite = !task.isFavorite;
+        saveTasks();
+        renderTasks();
+        if (currentPage === 'favoritePage') {
+            renderFavoriteTasks();
+        }
+    }
+}
+
+// 删除任务
+function deleteTask(taskId) {
+    if (confirm('确定要删除这个任务吗？')) {
+        tasks = tasks.filter(t => t.id !== taskId);
+        saveTasks();
+        renderTasks();
+        renderFavoriteTasks();
+        if (currentPage === 'historyPage') {
+            renderCompletedHistory();
+        }
+    }
+}
+
+// 渲染完成历史
+function renderCompletedHistory() {
+    // 计算7天前的日期
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    
+    // 筛选最近7天完成的任务
+    const recentCompleted = tasks
+        .filter(task => task.completed && task.completedAt && new Date(task.completedAt) >= sevenDaysAgo)
+        .sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt));
+    
+    completedHistory.innerHTML = '';
+    
+    if (recentCompleted.length === 0) {
+        completedHistory.innerHTML = '<div class="no-history">最近7天没有完成的任务</div>';
+        return;
+    }
+    
+    recentCompleted.forEach(task => {
+        const historyItem = document.createElement('div');
+        historyItem.className = 'history-item';
+        historyItem.innerHTML = `
+            <div class="history-title">✅ ${task.title}</div>
+            <div class="history-time">完成于: ${formatDateTime(task.completedAt)}</div>
+            <div class="history-category">${getCategoryName(task.category)}</div>
+        `;
+        completedHistory.appendChild(historyItem);
+    });
 }
 
 // 工具函数
@@ -210,62 +352,6 @@ function formatDate(dateString) {
     return `${date.getMonth() + 1}/${date.getDate()}`;
 }
 
-// 切换任务完成状态
-function toggleTaskComplete(taskId) {
-    const task = tasks.find(t => t.id === taskId);
-    if (task) {
-        task.completed = !task.completed;
-        task.completedAt = task.completed ? new Date().toISOString() : null;
-        saveTasks();
-        renderTasks();
-        renderCompletedHistory();
-    }
-}
-
-// 删除任务
-function deleteTask(taskId) {
-    if (confirm('确定要删除这个任务吗？')) {
-        tasks = tasks.filter(t => t.id !== taskId);
-        saveTasks();
-        renderTasks();
-        renderCompletedHistory();
-    }
-}
-
-// 渲染完成历史
-function renderCompletedHistory() {
-    const historyList = document.getElementById('completedHistory');
-    if (!historyList) return;
-    
-    // 计算7天前的日期
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-    
-    // 筛选最近7天完成的任务
-    const recentCompleted = tasks
-        .filter(task => task.completed && task.completedAt && new Date(task.completedAt) >= sevenDaysAgo)
-        .sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt));
-    
-    historyList.innerHTML = '';
-    
-    if (recentCompleted.length === 0) {
-        historyList.innerHTML = '<div class="no-history">最近7天没有完成的任务</div>';
-        return;
-    }
-    
-    recentCompleted.forEach(task => {
-        const historyItem = document.createElement('div');
-        historyItem.className = 'history-item';
-        historyItem.innerHTML = `
-            <div class="history-title">✅ ${task.title}</div>
-            <div class="history-time">完成于: ${formatDateTime(task.completedAt)}</div>
-            <div class="history-category">${getCategoryName(task.category)}</div>
-        `;
-        historyList.appendChild(historyItem);
-    });
-}
-
-// 格式化日期时间
 function formatDateTime(dateString) {
     if (!dateString) return '';
     const date = new Date(dateString);

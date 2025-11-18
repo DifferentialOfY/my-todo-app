@@ -19,19 +19,45 @@
             <button class="view-btn" data-view="summary">汇总模式</button>
         </div>
 
-        <!-- 分类侧边栏 -->
-        <div class="container">
-            <div class="sidebar">
-                <div class="category active" data-category="all">全部</div>
-                <div class="category" data-category="study">学习</div>
-                <div class="category" data-category="work">工作</div>
-                <div class="category" data-category="life">生活</div>
+        <!-- 主要内容区域 -->
+        <div class="main-container">
+            <!-- 首页 -->
+            <div class="page active" id="homePage">
+                <div class="container">
+                    <!-- 分类侧边栏 -->
+                    <div class="sidebar">
+                        <div class="category active" data-category="all">全部</div>
+                        <div class="category" data-category="study">学习</div>
+                        <div class="category" data-category="work">工作</div>
+                        <div class="category" data-category="life">生活</div>
+                    </div>
+
+                    <!-- 任务列表 -->
+                    <div class="main-content">
+                        <div class="task-list" id="taskList">
+                            <!-- 任务会动态显示在这里 -->
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- 任务列表 -->
-            <div class="main-content">
-                <div class="task-list" id="taskList">
-                    <!-- 任务会动态显示在这里 -->
+            <!-- 收藏页面 -->
+            <div class="page" id="favoritePage">
+                <div class="favorite-container">
+                    <h3 class="page-title">收藏的任务</h3>
+                    <div class="task-list" id="favoriteTaskList">
+                        <!-- 收藏的任务会显示在这里 -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 历史记录页面 -->
+            <div class="page" id="historyPage">
+                <div class="history-container">
+                    <h3 class="page-title">最近完成记录 (7天内)</h3>
+                    <div class="history-list" id="completedHistory">
+                        <!-- 完成的历史记录会显示在这里 -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -39,18 +65,11 @@
         <!-- 新建任务按钮 -->
         <button class="add-btn" id="addTaskBtn">+ 新建任务</button>
 
-        <div class="history-section">
-            <h3>最近完成记录 (7天内)</h3>
-            <div class="history-list" id="completedHistory">
-                <!-- 完成的历史记录会显示在这里 -->
-            </div>
-        </div>
-
         <!-- 底部导航 -->
         <nav class="bottom-nav">
-            <div class="nav-item active">首页</div>
-            <div class="nav-item">收藏</div>
-            <div class="nav-item">我的</div>
+            <div class="nav-item active" data-page="homePage">首页</div>
+            <div class="nav-item" data-page="favoritePage">收藏</div>
+            <div class="nav-item" data-page="historyPage">历史</div>
         </nav>
     </div>
 

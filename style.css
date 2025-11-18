@@ -24,11 +24,42 @@ body {
     color: white;
     padding: 15px;
     text-align: center;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    max-width: 400px;
+    z-index: 100;
 }
 
 .header h1 {
     font-size: 18px;
     font-weight: 600;
+}
+
+/* 页面容器 */
+.main-container {
+    margin-top: 60px; /* 给顶部栏留空间 */
+    margin-bottom: 60px; /* 给底部导航留空间 */
+    height: calc(100vh - 120px);
+    position: relative;
+}
+
+/* 页面切换 */
+.page {
+    display: none;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.page.active {
+    display: block;
+}
+
+.page-title {
+    padding: 15px;
+    background: white;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 0;
 }
 
 /* 视图切换 */
@@ -37,6 +68,11 @@ body {
     padding: 10px;
     background: white;
     border-bottom: 1px solid #eee;
+    position: fixed;
+    top: 50px;
+    width: 100%;
+    max-width: 400px;
+    z-index: 99;
 }
 
 .view-btn {
@@ -64,7 +100,8 @@ body {
 /* 主要内容区域 */
 .container {
     display: flex;
-    height: calc(100vh - 150px);
+    height: 100%;
+    margin-top: 50px; /* 给视图切换留空间 */
 }
 
 /* 侧边栏 */
@@ -73,6 +110,9 @@ body {
     background: #fafafa;
     border-right: 1px solid #eee;
     padding: 10px 0;
+    position: fixed;
+    height: calc(100% - 170px);
+    overflow-y: auto;
 }
 
 .category {
@@ -92,6 +132,8 @@ body {
 .main-content {
     flex: 1;
     padding: 10px;
+    margin-left: 100px; /* 给侧边栏留空间 */
+    height: 100%;
     overflow-y: auto;
 }
 
@@ -111,7 +153,7 @@ body {
 
 .task-header {
     display: flex;
-    justify-content: between;
+    justify-content: space-between;
     align-items: center;
     margin-bottom: 5px;
 }
@@ -139,6 +181,98 @@ body {
     margin-top: 5px;
 }
 
+/* 已完成任务样式 */
+.task-item.completed {
+    opacity: 0.7;
+    background: #f8f9fa;
+}
+
+.task-item.completed .task-title {
+    text-decoration: line-through;
+    color: #666;
+}
+
+/* 任务操作按钮 */
+.task-actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 8px;
+}
+
+.complete-btn, .delete-btn, .favorite-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.complete-btn {
+    background: #52c41a;
+    color: white;
+}
+
+.delete-btn {
+    background: #ff4d4f;
+    color: white;
+}
+
+.favorite-btn {
+    background: #faad14;
+    color: white;
+}
+
+.favorite-btn.favorited {
+    background: #722ed1;
+}
+
+.complete-btn:hover, .delete-btn:hover, .favorite-btn:hover {
+    opacity: 0.8;
+}
+
+/* 收藏页面和历史页面 */
+.favorite-container, .history-container {
+    padding: 10px;
+    height: 100%;
+    overflow-y: auto;
+}
+
+/* 历史记录区域 */
+.history-list {
+    height: 100%;
+    overflow-y: auto;
+}
+
+.history-item {
+    padding: 10px;
+    border: 1px solid #f0f0f0;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    background: #fafafa;
+}
+
+.history-title {
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.history-time {
+    font-size: 12px;
+    color: #666;
+}
+
+.history-category {
+    font-size: 11px;
+    color: #999;
+    margin-top: 2px;
+}
+
+.no-tasks, .no-history {
+    text-align: center;
+    color: #999;
+    padding: 40px 20px;
+}
+
 /* 底部导航 */
 .bottom-nav {
     position: fixed;
@@ -150,6 +284,7 @@ body {
     display: flex;
     background: white;
     border-top: 1px solid #eee;
+    z-index: 100;
 }
 
 .nav-item {
@@ -177,6 +312,7 @@ body {
     font-size: 24px;
     cursor: pointer;
     box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    z-index: 101;
 }
 
 /* 模态框 */
@@ -253,93 +389,4 @@ body {
 
 .summary-mode .main-content {
     margin-left: 0;
-}
-
-/* 已完成任务样式 */
-.task-item.completed {
-    opacity: 0.7;
-    background: #f8f9fa;
-}
-
-.task-item.completed .task-title {
-    text-decoration: line-through;
-    color: #666;
-}
-
-/* 任务操作按钮 */
-.task-actions {
-    margin-top: 10px;
-    display: flex;
-    gap: 8px;
-}
-
-.complete-btn, .delete-btn {
-    padding: 6px 12px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 12px;
-}
-
-.complete-btn {
-    background: #52c41a;
-    color: white;
-}
-
-.delete-btn {
-    background: #ff4d4f;
-    color: white;
-}
-
-.complete-btn:hover, .delete-btn:hover {
-    opacity: 0.8;
-}
-
-/* 历史记录区域 */
-.history-section {
-    padding: 15px;
-    background: white;
-    margin-bottom: 60px; /* 给底部导航留空间 */
-    border-top: 1px solid #eee;
-}
-
-.history-section h3 {
-    margin-bottom: 10px;
-    color: #333;
-    font-size: 16px;
-}
-
-.history-list {
-    max-height: 200px;
-    overflow-y: auto;
-}
-
-.history-item {
-    padding: 10px;
-    border: 1px solid #f0f0f0;
-    border-radius: 6px;
-    margin-bottom: 8px;
-    background: #fafafa;
-}
-
-.history-title {
-    font-weight: 600;
-    margin-bottom: 4px;
-}
-
-.history-time {
-    font-size: 12px;
-    color: #666;
-}
-
-.history-category {
-    font-size: 11px;
-    color: #999;
-    margin-top: 2px;
-}
-
-.no-history {
-    text-align: center;
-    color: #999;
-    padding: 20px;
 }
