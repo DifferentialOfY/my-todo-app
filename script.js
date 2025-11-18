@@ -28,6 +28,9 @@ let currentView = 'category';
 let currentCategory = 'all';
 let currentPage = 'homePage';
 
+// 从本地存储获取主题设置，默认为蓝色
+let currentTheme = localStorage.getItem('theme') || 'blue';
+
 // DOM 元素
 const taskList = document.getElementById('taskList');
 const favoriteTaskList = document.getElementById('favoriteTaskList');
@@ -40,9 +43,11 @@ const viewBtns = document.querySelectorAll('.view-btn');
 const categories = document.querySelectorAll('.category');
 const navItems = document.querySelectorAll('.nav-item');
 const pages = document.querySelectorAll('.page');
+const colorOptions = document.querySelectorAll('.color-option');
 
 // 初始化
 function init() {
+    applyTheme(currentTheme); // 应用保存的主题
     renderTasks();
     renderFavoriteTasks();
     renderCompletedHistory();
@@ -87,6 +92,14 @@ function setupEventListeners() {
         });
     });
 
+    // 颜色主题切换
+    colorOptions.forEach(option => {
+        option.addEventListener('click', (e) => {
+            const color = e.currentTarget.dataset.color;
+            switchTheme(color);
+        });
+    });
+
     // 点击模态框外部关闭
     taskModal.addEventListener('click', (e) => {
         if (e.target === taskModal) {
@@ -96,10 +109,30 @@ function setupEventListeners() {
     });
 }
 
+// 切换主题
+function switchTheme(color) {
+    currentTheme = color;
+    localStorage.setItem('theme', color);
+    applyTheme(color);
+    
+    // 更新颜色选项的激活状态
+    colorOptions.forEach(option => {
+        option.classList.toggle('active', option.dataset.color === color);
+    });
+}
+
+// 应用主题
+function applyTheme(color) {
+    // 移除所有主题类
+    document.body.classList.remove('blue-theme', 'green-theme', 'pink-theme');
+    // 添加当前主题类
+    document.body.classList.add(`${color}-theme`);
+}
+
 // 更新body类名来控制元素显示/隐藏
 function updateBodyClass() {
     // 移除所有页面类
-    document.body.classList.remove('home-page', 'favorite-page', 'history-page');
+    document.body.classList.remove('home-page', 'favorite-page', 'history-page', 'profile-page');
     
     // 添加当前页面类
     if (currentPage === 'homePage') {
@@ -108,6 +141,8 @@ function updateBodyClass() {
         document.body.classList.add('favorite-page');
     } else if (currentPage === 'historyPage') {
         document.body.classList.add('history-page');
+    } else if (currentPage === 'profilePage') {
+        document.body.classList.add('profile-page');
     }
 }
 
@@ -135,6 +170,11 @@ function switchPage(page) {
         renderFavoriteTasks();
     } else if (page === 'historyPage') {
         renderCompletedHistory();
+    } else if (page === 'profilePage') {
+        // 确保颜色选项状态正确
+        colorOptions.forEach(option => {
+            option.classList.toggle('active', option.dataset.color === currentTheme);
+        });
     }
 }
 

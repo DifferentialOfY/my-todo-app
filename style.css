@@ -4,10 +4,33 @@
     box-sizing: border-box;
 }
 
+:root {
+    --primary-color: #1890ff; /* 默认蓝色 */
+    --primary-light: #e6f7ff;
+}
+
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background-color: #f5f5f5;
     color: #333;
+}
+
+/* 蓝色主题（默认） */
+body.blue-theme {
+    --primary-color: #1890ff;
+    --primary-light: #e6f7ff;
+}
+
+/* 绿色主题 */
+body.green-theme {
+    --primary-color: #52c41a;
+    --primary-light: #f6ffed;
+}
+
+/* 粉色主题 */
+body.pink-theme {
+    --primary-color: #eb2f96;
+    --primary-light: #fff0f6;
 }
 
 .app {
@@ -20,7 +43,7 @@ body {
 
 /* 顶部栏 */
 .header {
-    background: #1890ff;
+    background: var(--primary-color);
     color: white;
     padding: 15px;
     text-align: center;
@@ -88,14 +111,15 @@ body:not(.home-page) .home-only {
 .view-btn {
     flex: 1;
     padding: 8px;
-    border: 1px solid #1890ff;
+    border: 1px solid var(--primary-color);
     background: white;
-    color: #1890ff;
+    color: var(--primary-color);
     cursor: pointer;
+    transition: all 0.3s;
 }
 
 .view-btn.active {
-    background: #1890ff;
+    background: var(--primary-color);
     color: white;
 }
 
@@ -130,12 +154,13 @@ body:not(.home-page) .home-only {
     text-align: center;
     cursor: pointer;
     border-left: 3px solid transparent;
+    transition: all 0.3s;
 }
 
 .category.active {
-    background: #e6f7ff;
-    border-left-color: #1890ff;
-    color: #1890ff;
+    background: var(--primary-light);
+    border-left-color: var(--primary-color);
+    color: var(--primary-color);
 }
 
 /* 任务列表 */
@@ -215,6 +240,7 @@ body:not(.home-page) .home-only {
     border-radius: 4px;
     cursor: pointer;
     font-size: 12px;
+    transition: all 0.3s;
 }
 
 .complete-btn {
@@ -241,11 +267,102 @@ body:not(.home-page) .home-only {
 }
 
 /* 收藏页面和历史页面 */
-.favorite-container, .history-container {
+.favorite-container, .history-container, .profile-container {
     padding: 10px;
     height: 100%;
     overflow-y: auto;
     margin-top: 50px; /* 给固定位置留空间 */
+}
+
+/* 个人设置页面 */
+.profile-container {
+    padding: 20px;
+}
+
+.setting-section {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.setting-section h4 {
+    margin-bottom: 15px;
+    color: #333;
+    font-size: 16px;
+}
+
+/* 颜色选择 */
+.color-options {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.color-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    border: 2px solid #f0f0f0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    min-width: 80px;
+}
+
+.color-option.active {
+    border-color: var(--primary-color);
+    background: var(--primary-light);
+}
+
+.color-preview {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.color-preview.blue {
+    background: #1890ff;
+}
+
+.color-preview.green {
+    background: #52c41a;
+}
+
+.color-preview.pink {
+    background: #eb2f96;
+}
+
+.color-option span {
+    font-size: 12px;
+    color: #666;
+}
+
+.color-option.active span {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+/* 应用信息 */
+.app-info {
+    color: #666;
+    font-size: 14px;
+}
+
+.app-info p {
+    margin-bottom: 8px;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.app-info p:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
 }
 
 /* 历史记录区域 */
@@ -303,10 +420,11 @@ body:not(.home-page) .home-only {
     padding: 12px;
     text-align: center;
     cursor: pointer;
+    transition: all 0.3s;
 }
 
 .nav-item.active {
-    color: #1890ff;
+    color: var(--primary-color);
 }
 
 /* 新建任务按钮 */
@@ -317,13 +435,14 @@ body:not(.home-page) .home-only {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background: #1890ff;
+    background: var(--primary-color);
     color: white;
     border: none;
     font-size: 24px;
     cursor: pointer;
     box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     z-index: 101;
+    transition: all 0.3s;
 }
 
 /* 模态框 */
@@ -385,7 +504,7 @@ body:not(.home-page) .home-only {
 }
 
 .modal-actions button[type="submit"] {
-    background: #1890ff;
+    background: var(--primary-color);
     color: white;
 }
 
@@ -404,11 +523,13 @@ body:not(.home-page) .home-only {
 
 /* 调整非首页时的布局 */
 .favorite-page .main-container,
-.history-page .main-container {
+.history-page .main-container,
+.profile-page .main-container {
     margin-top: 50px; /* 只给顶部栏留空间，视图切换已隐藏 */
 }
 
 .favorite-page .favorite-container,
-.history-page .history-container {
+.history-page .history-container,
+.profile-page .profile-container {
     margin-top: 0; /* 移除额外的上边距 */
 }
