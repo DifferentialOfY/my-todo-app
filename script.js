@@ -47,6 +47,7 @@ function init() {
     renderFavoriteTasks();
     renderCompletedHistory();
     setupEventListeners();
+    updateBodyClass(); // 初始化body类名
 }
 
 // 设置事件监听
@@ -95,6 +96,21 @@ function setupEventListeners() {
     });
 }
 
+// 更新body类名来控制元素显示/隐藏
+function updateBodyClass() {
+    // 移除所有页面类
+    document.body.classList.remove('home-page', 'favorite-page', 'history-page');
+    
+    // 添加当前页面类
+    if (currentPage === 'homePage') {
+        document.body.classList.add('home-page');
+    } else if (currentPage === 'favoritePage') {
+        document.body.classList.add('favorite-page');
+    } else if (currentPage === 'historyPage') {
+        document.body.classList.add('history-page');
+    }
+}
+
 // 切换页面
 function switchPage(page) {
     currentPage = page;
@@ -108,6 +124,9 @@ function switchPage(page) {
     navItems.forEach(item => {
         item.classList.toggle('active', item.dataset.page === page);
     });
+    
+    // 更新body类名来控制显示/隐藏
+    updateBodyClass();
     
     // 根据页面刷新内容
     if (page === 'homePage') {

@@ -75,6 +75,16 @@ body {
     z-index: 99;
 }
 
+/* 只在首页显示的元素 */
+.home-only {
+    display: block;
+}
+
+/* 当不在首页时，隐藏 home-only 元素 */
+body:not(.home-page) .home-only {
+    display: none;
+}
+
 .view-btn {
     flex: 1;
     padding: 8px;
@@ -235,11 +245,12 @@ body {
     padding: 10px;
     height: 100%;
     overflow-y: auto;
+    margin-top: 50px; /* 给固定位置留空间 */
 }
 
 /* 历史记录区域 */
 .history-list {
-    height: 100%;
+    height: calc(100% - 60px);
     overflow-y: auto;
 }
 
@@ -389,4 +400,15 @@ body {
 
 .summary-mode .main-content {
     margin-left: 0;
+}
+
+/* 调整非首页时的布局 */
+.favorite-page .main-container,
+.history-page .main-container {
+    margin-top: 50px; /* 只给顶部栏留空间，视图切换已隐藏 */
+}
+
+.favorite-page .favorite-container,
+.history-page .history-container {
+    margin-top: 0; /* 移除额外的上边距 */
 }
