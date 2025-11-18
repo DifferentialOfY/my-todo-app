@@ -438,7 +438,7 @@ body:not(.home-page) .home-only {
     background: var(--primary-color);
     color: white;
     border: none;
-    font-size: 24px;
+    font-size: 15px;
     cursor: pointer;
     box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     z-index: 101;
